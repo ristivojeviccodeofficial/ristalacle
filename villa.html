@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Villa — La Clé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-head solid">
+  <div class="wrap bar">
+    <a class="brand-mark" href="index.html">La Clé</a>
+    <nav aria-label="Main">
+      <a href="index.html#destinations">Destinations</a>
+      <a href="index.html#membership">Membership</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div class="acct" id="acct"></div>
+  </div>
+</header>
+
+<main class="wrap villa-page" id="page">
+  <p class="empty">Loading…</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Copyright La Clé 2026</span>
+    <span>Design by Ristivojević</span>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="common.js"></script>
+<script>
+(async function () {
+  var $ = LC.$, esc = LC.esc, page = $("#page");
+  LC.mountAccount($("#acct"));
+
+  function notFound(msg) {
+    page.innerHTML = '<a class="back" href="index.html#destinations">&larr; All destinations</a><p class="empty">' + esc(msg) + '</p>';
+  }
+
+  var id = new URLSearchParams(location.search).get("id");
+  if (!LC.configured) return notFound("Villa pages need the database. Fill in config.js first.");
+  if (!id) return notFound("This villa could not be found.");
+
+  var r = await LC.sb.from("villas").select("*").eq("id", id).maybeSingle();
+  if (r.error || !r.data) return notFound("This villa could not be found.");
+  var v = r.data;
+
+  var d = await LC.sb.from("destinations").select("*").eq("slug", v.destination).maybeSingle();
+  var dest = d.data;
+  var more = await LC.sb.from("villas").select("id,name,location,images").eq("destination", v.destination).eq("published", true).neq("id", v.id).order("sort").limit(6);
+
+  document.title = v.name + " — La Clé";
+
+  var imgs = v.images || [];
+  var paragraphs = String(v.description || "").split(/\n{2,}/).filter(Boolean).map(function (p) { return "<p>" + esc(p).replace(/\n/g, "<br>") + "</p>"; }).join("");
+
+  page.innerHTML =
+    '<a class="back" href="index.html#destinations">&larr; All destinations</a>' +
+    '<div class="gallery">' +
+      '<div class="main" id="gMain">' + (imgs[0] ? '<img src="' + esc(imgs[0]) + '" alt="' + esc(v.name) + '">' : '<span>' + esc((dest && dest.emoji) || "") + ' Photos coming soon</span>') + '</div>' +
+      (imgs.length > 1 ? '<div class="thumbs" id="gThumbs">' + imgs.map(function (u, i) {
+        return '<button type="button" data-i="' + i + '" aria-label="Photo ' + (i + 1) + '"' + (i === 0 ? ' aria-current="true"' : '') + '><img src="' + esc(u) + '" alt=""></button>';
+      }).join("") + '</div>' : '') +
+    '</div>' +
+    '<div class="vhead"><h1>' + esc(v.name) + '</h1><p class="loc">' + esc(v.location || (dest && dest.name) || "") + '</p></div>' +
+    '<div class="vbody">' +
+      '<div class="desc">' + (paragraphs || '<p>Details for this villa are available on request.</p>') + '</div>' +
+      '<aside class="aside">' +
+        (v.price_note ? '<p class="price">' + esc(v.price_note) + '</p>' : '') +
+        '<button class="inq" type="button" id="vInq">Inquire now</button>' +
+        '<button class="inq secondary" type="button" id="vChat">Chat with us</button>' +
+      '</aside>' +
+    '</div>' +
+    ((more.data && more.data.length) ? '<div class="others"><h2>More in ' + esc(dest ? dest.name : "this destination") + '</h2><div class="ocards">' +
+      more.data.map(function (m) {
+        return '<a class="ocard" href="villa.html?id=' + encodeURIComponent(m.id) + '"><div class="im">' +
+          (m.images && m.images[0] ? '<img src="' + esc(m.images[0]) + '" alt="" loading="lazy">' : esc((dest && dest.emoji) || "")) +
+          '</div><div class="t"><strong>' + esc(m.name) + '</strong><span>' + esc(m.location || "") + '</span></div></a>';
+      }).join("") + '</div></div>' : '');
+
+  var th = $("#gThumbs");
+  if (th) th.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-i]"); if (!b) return;
+    th.querySelectorAll("button").forEach(function (x) { x.removeAttribute("aria-current"); });
+    b.setAttribute("aria-current", "true");
+    $("#gMain").innerHTML = '<img src="' + esc(imgs[+b.dataset.i]) + '" alt="' + esc(v.name) + '">';
+  });
+  $("#vInq").onclick = function () { LC.openInquiry({ id: v.id, name: v.name, location: v.location }); };
+  $("#vChat").onclick = function () { LC.openChat(); };
+})();
+</script>
+</body>
+</html>

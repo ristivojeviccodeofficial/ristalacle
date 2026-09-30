@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin — La Clé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  body{font-weight:400;font-size:1rem}
+  .a-top{background:var(--panel);color:var(--panel-ink)}
+  .a-top .bar{display:flex;align-items:center;gap:1rem;padding:.8rem 0;flex-wrap:wrap}
+  .a-top .brand-mark{font-size:1.9rem}
+  .tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-left:1rem}
+  .tabs button{background:transparent;border:0;color:inherit;padding:.5rem 1rem;border-radius:999px;cursor:pointer;opacity:.8;position:relative}
+  .tabs button[aria-selected="true"]{background:rgba(255,255,255,.16);opacity:1}
+  .tabs .badge{position:static;display:inline-grid;margin-left:.4rem;vertical-align:middle}
+  .a-top .right{margin-left:auto;display:flex;gap:.6rem;align-items:center;font-size:.9rem}
+  .panel{padding-block:2rem 4rem}
+  .panel h2{text-align:left;font-size:2rem;margin-bottom:1rem}
+  .toolbar{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
+  .toolbar .grow{flex:1}
+  .toolbar select{font:inherit;padding:.55rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink)}
+  .btn.sm,.tbtn{padding:.5rem 1.1rem;font-size:.9rem}
+  .tbtn{border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+  .tbtn:hover{background:var(--field)}
+  .tbtn.danger{color:#b3402f;border-color:rgba(179,64,47,.4)}
+  .tbl{width:100%;border-collapse:collapse;background:var(--field);border-radius:14px;overflow:hidden}
+  .tbl th,.tbl td{text-align:left;padding:.7rem .9rem;border-bottom:1px solid var(--line);vertical-align:middle}
+  .tbl th{font-weight:500;font-size:.85rem;color:var(--muted)}
+  .tbl tr:last-child td{border-bottom:0}
+  .tbl img.th{width:72px;height:52px;object-fit:cover;border-radius:8px;display:block;background:var(--panel)}
+  .tbl .acts{display:flex;gap:.4rem;flex-wrap:wrap}
+  .scroll{overflow-x:auto}
+  .muted{color:var(--muted)}
+  .login{max-width:420px;margin:12vh auto;padding:0 1.25rem}
+  .login .dlg{max-height:none}
+  .chk{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+  .chk input{width:auto}
+  .imgs{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:.75rem}
+  .imgs figure{margin:0;width:130px;position:relative}
+  .imgs img{width:130px;height:94px;object-fit:cover;border-radius:10px;display:block;background:var(--panel)}
+  .imgs .ctl{display:flex;justify-content:space-between;margin-top:.25rem}
+  .imgs .ctl button{border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:8px;padding:.1rem .55rem;cursor:pointer}
+  .imgs .first{position:absolute;top:6px;left:6px;background:var(--gold-btn);color:#fff;font-size:.7rem;border-radius:6px;padding:0 .4rem}
+  .dlg.wide{max-width:100%}
+  dialog.big{width:min(760px,calc(100% - 1.5rem))}
+  .inq-card{background:var(--field);border:1px solid var(--line);border-radius:14px;padding:1rem 1.25rem;margin-bottom:.9rem}
+  .inq-card .top{display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap;justify-content:space-between}
+  .inq-card h3{font-size:1.4rem;margin:0}
+  .inq-card p{margin:.4rem 0;overflow-wrap:anywhere}
+  .inq-card .meta{color:var(--muted);font-size:.9rem}
+  .inq-card select{font:inherit;padding:.4rem .6rem;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+  .chatwrap{display:grid;grid-template-columns:280px 1fr;gap:1rem;height:min(620px,calc(100vh - 14rem));min-height:420px}
+  .convs{border:1px solid var(--line);border-radius:14px;overflow:auto;background:var(--field)}
+  .convs button{display:block;width:100%;text-align:left;padding:.8rem 1rem;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+  .convs button[aria-current="true"]{background:rgba(184,148,90,.22)}
+  .convs .n{display:flex;justify-content:space-between;gap:.5rem;font-weight:500}
+  .convs .badge{position:static;display:inline-grid}
+  .thread{border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+  .thread .head{padding:.8rem 1rem;border-bottom:1px solid var(--line);font-weight:500}
+  .thread .chat-msgs{flex:1}
+  .thread form{display:flex;gap:.5rem;padding:.75rem;border-top:1px solid var(--line)}
+  .thread input{flex:1;font:inherit;padding:.7rem 1rem;border-radius:999px;border:1px solid var(--line);background:var(--field);color:var(--ink);min-width:0}
+  @media (max-width:760px){.chatwrap{grid-template-columns:1fr;height:auto}.convs{max-height:200px}.thread{height:460px}}
+</style>
+</head>
+<body data-widgets="off">
+
+<!-- Nije podešeno -->
+<div class="login" id="vSetup" hidden>
+  <div class="dlg"><h3>Setup needed</h3>
+    <p class="note">Open <strong>config.js</strong> and paste your Supabase URL and anon key. See README.md.</p></div>
+</div>
+
+<!-- Prijava -->
+<div class="login" id="vLogin" hidden>
+  <div class="dlg">
+    <h3>La Clé Admin</h3>
+    <form id="loginForm" novalidate>
+      <div class="field"><label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="email"></div>
+      <div class="field"><label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password"></div>
+      <p class="err" id="lErr" role="alert"></p>
+      <button class="inq" type="submit" id="lBtn">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<!-- Bez pristupa -->
+<div class="login" id="vDenied" hidden>
+  <div class="dlg"><h3>No access</h3>
+    <p class="note">This account is not an admin. Ask the owner to grant access.</p>
+    <button class="inq" type="button" id="deniedOut">Sign out</button></div>
+</div>
+
+<!-- Aplikacija -->
+<div id="vApp" hidden>
+  <header class="a-top">
+    <div class="wrap bar">
+      <a class="brand-mark" href="index.html">La Clé</a>
+      <div class="tabs" role="tablist" aria-label="Admin sections">
+        <button role="tab" data-tab="villas" aria-selected="true">Villas</button>
+        <button role="tab" data-tab="destinations" aria-selected="false">Destinations</button>
+        <button role="tab" data-tab="inquiries" aria-selected="false">Inquiries<span class="badge" id="bInq" hidden></span></button>
+        <button role="tab" data-tab="chat" aria-selected="false">Chat<span class="badge" id="bChat" hidden></span></button>
+      </div>
+      <div class="right"><span id="who"></span><button class="pill" type="button" id="outBtn">Sign out</button></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- VILE -->
+    <section class="panel" id="p-villas">
+      <h2>Villas</h2>
+      <div class="toolbar">
+        <select id="vFilter" aria-label="Filter by destination"></select>
+        <span class="grow"></span>
+        <button class="btn sm" type="button" id="addVilla">Add villa</button>
+      </div>
+      <div class="scroll"><table class="tbl"><thead><tr><th></th><th>Name</th><th>Destination</th><th>Order</th><th>Live</th><th></th></tr></thead><tbody id="vRows"></tbody></table></div>
+      <p class="muted" id="vEmpty" hidden>No villas yet. Click "Add villa".</p>
+    </section>
+
+    <!-- DESTINACIJE -->
+    <section class="panel" id="p-destinations" hidden>
+      <h2>Destinations</h2>
+      <div class="toolbar"><span class="grow"></span><button class="btn sm" type="button" id="addDest">Add destination</button></div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Name</th><th>Slug</th><th>Order</th><th>Live</th><th></th></tr></thead><tbody id="dRows"></tbody></table></div>
+    </section>
+
+    <!-- UPITI -->
+    <section class="panel" id="p-inquiries" hidden>
+      <h2>Inquiries</h2>
+      <div class="toolbar">
+        <select id="iFilter" aria-label="Filter by status">
+          <option value="">All</option><option value="new">New</option><option value="contacted">Contacted</option><option value="closed">Closed</option>
+        </select>
+      </div>
+      <div id="iList"></div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="panel" id="p-chat" hidden>
+      <h2>Chat</h2>
+      <div class="chatwrap">
+        <div class="convs" id="cList"></div>
+        <div class="thread">
+          <div class="head" id="cHead">Select a conversation</div>
+          <div class="chat-msgs" id="cMsgs" aria-live="polite"></div>
+          <form id="cForm" hidden>
+            <input id="cInput" maxlength="2000" placeholder="Write a reply" autocomplete="off" aria-label="Reply">
+            <button class="send" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Forma: vila -->
+<dialog id="villaDlg" class="big" aria-labelledby="villaTitle">
+  <div class="dlg">
+    <h3 id="villaTitle">Villa</h3>
+    <button class="x" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <form id="villaForm" novalidate>
+      <div class="row2">
+        <div class="field"><label for="fvDest">Destination</label><select id="fvDest"></select></div>
+        <div class="field"><label for="fvName">Name</label><input id="fvName" maxlength="120"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="fvLoc">Location</label><input id="fvLoc" maxlength="160" placeholder="Dubrovnik, Croatia"></div>
+        <div class="field"><label for="fvPrice">Price note (optional)</label><input id="fvPrice" maxlength="160" placeholder="From €2,500 / night"></div>
+      </div>
+      <div class="field"><label for="fvDesc">Description (blank line = new paragraph)</label><textarea id="fvDesc" maxlength="6000" style="min-height:160px"></textarea></div>
+      <div class="field">
+        <label>Photos (first one is the cover)</label>
+        <div class="imgs" id="fvImgs"></div>
+        <input id="fvFiles" type="file" accept="image/*" multiple>
+        <span class="muted" id="fvUp"></span>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="fvSort">Order (smaller = first)</label><input id="fvSort" type="number" value="0"></div>
+        <label class="chk" style="align-self:end"><input id="fvPub" type="checkbox" checked> Visible on the website</label>
+      </div>
+      <p class="err" id="fvErr" role="alert"></p>
+      <button class="inq" type="submit" id="fvSave">Save villa</button>
+    </form>
+  </div>
+</dialog>
+
+<!-- Forma: destinacija -->
+<dialog id="destDlg" aria-labelledby="destTitle">
+  <div class="dlg">
+    <h3 id="destTitle">Destination</h3>
+    <button class="x" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <form id="destForm" novalidate>
+      <div class="row2">
+        <div class="field"><label for="fdName">Name</label><input id="fdName" maxlength="80"></div>
+        <div class="field"><label for="fdEmoji">Emoji</label><input id="fdEmoji" maxlength="8" value="🏝️"></div>
+      </div>
+      <div class="field"><label for="fdSlug">Slug (used internally, e.g. greece)</label><input id="fdSlug" maxlength="60"></div>
+      <div class="row2">
+        <div class="field"><label for="fdSort">Order</label><input id="fdSort" type="number" value="0"></div>
+        <label class="chk" style="align-self:end"><input id="fdPub" type="checkbox" checked> Visible on the website</label>
+      </div>
+      <p class="err" id="fdErr" role="alert"></p>
+      <button class="inq" type="submit">Save destination</button>
+    </form>
+  </div>
+</dialog>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="common.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = LC.$, esc = LC.esc, sb = LC.sb;
+  var S = { dests: [], villas: [], inqs: [], convs: [], unread: {}, curConv: null, tab: "villas", live: null, started: false };
+  var views = ["vSetup", "vLogin", "vDenied", "vApp"];
+  function show(id) { views.forEach(function (v) { $("#" + v).hidden = v !== id; }); }
+
+  document.querySelectorAll("dialog").forEach(function (d) {
+    d.addEventListener("click", function (e) { if (e.target === d || e.target.closest("[data-close]")) d.close(); });
+  });
+
+  /* ---------- Prijava / pristup ---------- */
+  function route() {
+    if (!LC.configured) return show("vSetup");
+    if (!LC.user) { stopLive(); S.started = false; return show("vLogin"); }
+    if (!LC.profile || !LC.profile.is_admin) return show("vDenied");
+    show("vApp");
+    $("#who").textContent = LC.profile.full_name || LC.user.email;
+    if (!S.started) { S.started = true; bootApp(); }
+  }
+  LC.onAuth(route);
+
+  $("#loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var err = $("#lErr"), btn = $("#lBtn"); err.textContent = ""; btn.disabled = true;
+    var r = await sb.auth.signInWithPassword({ email: $("#lEmail").value.trim(), password: $("#lPass").value });
+    btn.disabled = false;
+    if (r.error) { err.textContent = r.error.message; return; }
+    LC.user = r.data.user; await LC.loadProfile(); route();
+  });
+  $("#outBtn").onclick = $("#deniedOut").onclick = async function () { await LC.signOut(); route(); };
+
+  /* ---------- Tabovi ---------- */
+  document.querySelectorAll(".tabs button").forEach(function (b) {
+    b.addEventListener("click", function () { setTab(b.dataset.tab); });
+  });
+  function setTab(t) {
+    S.tab = t;
+    document.querySelectorAll(".tabs button").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === t)); });
+    ["villas", "destinations", "inquiries", "chat"].forEach(function (p) { $("#p-" + p).hidden = p !== t; });
+    if (t === "chat") loadConvs();
+  }
+
+  async function bootApp() {
+    await loadDests(); await Promise.all([loadVillas(), loadInqs(), loadConvs()]);
+    startLive();
+  }
+
+  /* ---------- Destinacije ---------- */
+  async function loadDests() {
+    var r = await sb.from("destinations").select("*").order("sort").order("name");
+    S.dests = r.data || [];
+    var opts = S.dests.map(function (d) { return '<option value="' + esc(d.slug) + '">' + esc(d.name) + '</option>'; }).join("");
+    $("#fvDest").innerHTML = opts;
+    $("#vFilter").innerHTML = '<option value="">All destinations</option>' + opts;
+    $("#dRows").innerHTML = S.dests.map(function (d) {
+      return '<tr><td>' + esc(d.emoji) + ' ' + esc(d.name) + '</td><td class="muted">' + esc(d.slug) + '</td><td>' + d.sort + '</td>' +
+        '<td><input type="checkbox" data-pubd="' + esc(d.slug) + '" ' + (d.published ? "checked" : "") + ' aria-label="Visible"></td>' +
+        '<td><div class="acts"><button class="tbtn" data-ed="' + esc(d.slug) + '">Edit</button><button class="tbtn danger" data-dd="' + esc(d.slug) + '">Delete</button></div></td></tr>';
+    }).join("") || '<tr><td colspan="5" class="muted">No destinations yet.</td></tr>';
+  }
+  $("#dRows").addEventListener("click", async function (e) {
+    var ed = e.target.closest("[data-ed]"), dd = e.target.closest("[data-dd]");
+    if (ed) openDest(S.dests.filter(function (d) { return d.slug === ed.dataset.ed; })[0]);
+    if (dd) {
+      if (!confirm("Delete this destination? It only works if it has no villas.")) return;
+      var r = await sb.from("destinations").delete().eq("slug", dd.dataset.dd);
+      if (r.error) return LC.toast(/foreign key|violates/i.test(r.error.message) ? "Delete or move its villas first." : r.error.message);
+      LC.toast("Destination deleted"); loadDests();
+    }
+  });
+  $("#dRows").addEventListener("change", async function (e) {
+    var c = e.target.closest("[data-pubd]"); if (!c) return;
+    var r = await sb.from("destinations").update({ published: c.checked }).eq("slug", c.dataset.pubd);
+    if (r.error) { LC.toast(r.error.message); c.checked = !c.checked; }
+  });
+  var editDest = null;
+  function slugify(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function openDest(d) {
+    editDest = d || null;
+    $("#destTitle").textContent = d ? "Edit destination" : "New destination";
+    $("#fdName").value = d ? d.name : ""; $("#fdEmoji").value = d ? d.emoji : "🏝️";
+    $("#fdSlug").value = d ? d.slug : ""; $("#fdSlug").readOnly = !!d;
+    $("#fdSort").value = d ? d.sort : S.dests.length + 1; $("#fdPub").checked = d ? d.published : true;
+    $("#fdErr").textContent = ""; $("#destDlg").showModal();
+  }
+  $("#addDest").onclick = function () { openDest(null); };
+  $("#fdName").addEventListener("input", function () { if (!editDest) $("#fdSlug").value = slugify($("#fdName").value); });
+  $("#destForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var row = { name: $("#fdName").value.trim(), emoji: $("#fdEmoji").value.trim() || "🏝️", sort: parseInt($("#fdSort").value, 10) || 0, published: $("#fdPub").checked };
+    var slug = $("#fdSlug").value.trim();
+    if (!row.name) return ($("#fdErr").textContent = "Enter a name.");
+    if (!/^[a-z0-9-]+$/.test(slug)) return ($("#fdErr").textContent = "Slug: only lowercase letters, numbers and dashes.");
+    var r = editDest ? await sb.from("destinations").update(row).eq("slug", editDest.slug)
+                     : await sb.from("destinations").insert(Object.assign({ slug: slug }, row));
+    if (r.error) return ($("#fdErr").textContent = /duplicate/i.test(r.error.message) ? "That slug already exists." : r.error.message);
+    $("#destDlg").close(); LC.toast("Destination saved"); loadDests();
+  });
+
+  /* ---------- Vile ---------- */
+  async function loadVillas() {
+    var r = await sb.from("villas").select("*").order("destination").order("sort").order("created_at");
+    S.villas = r.data || []; renderVillas();
+  }
+  function renderVillas() {
+    var f = $("#vFilter").value;
+    var rows = S.villas.filter(function (v) { return !f || v.destination === f; });
+    $("#vEmpty").hidden = rows.length > 0;
+    $("#vRows").innerHTML = rows.map(function (v) {
+      var d = S.dests.filter(function (x) { return x.slug === v.destination; })[0];
+      return '<tr><td>' + (v.images && v.images[0] ? '<img class="th" src="' + esc(v.images[0]) + '" alt="">' : '<div class="th"></div>') + '</td>' +
+        '<td><strong>' + esc(v.name) + '</strong><br><span class="muted">' + esc(v.location || "") + '</span></td>' +
+        '<td>' + esc(d ? d.name : v.destination) + '</td><td>' + v.sort + '</td>' +
+        '<td><input type="checkbox" data-pubv="' + v.id + '" ' + (v.published ? "checked" : "") + ' aria-label="Visible"></td>' +
+        '<td><div class="acts"><a class="tbtn" href="villa.html?id=' + v.id + '" target="_blank" rel="noopener">Open</a>' +
+        '<button class="tbtn" data-ev="' + v.id + '">Edit</button><button class="tbtn danger" data-dv="' + v.id + '">Delete</button></div></td></tr>';
+    }).join("");
+  }
+  $("#vFilter").onchange = renderVillas;
+  $("#vRows").addEventListener("click", async function (e) {
+    var ev = e.target.closest("[data-ev]"), dv = e.target.closest("[data-dv]");
+    if (ev) openVilla(S.villas.filter(function (v) { return v.id === ev.dataset.ev; })[0]);
+    if (dv) {
+      var v = S.villas.filter(function (x) { return x.id === dv.dataset.dv; })[0];
+      if (!confirm('Delete "' + v.name + '"? This cannot be undone.')) return;
+      var r = await sb.from("villas").delete().eq("id", v.id);
+      if (r.error) return LC.toast(r.error.message);
+      removeFiles(v.images || []); LC.toast("Villa deleted"); loadVillas();
+    }
+  });
+  $("#vRows").addEventListener("change", async function (e) {
+    var c = e.target.closest("[data-pubv]"); if (!c) return;
+    var r = await sb.from("villas").update({ published: c.checked }).eq("id", c.dataset.pubv);
+    if (r.error) { LC.toast(r.error.message); c.checked = !c.checked; } else loadVillas();
+  });
+
+  var editVilla = null, imgs = [], added = [], removed = [];
+  function pathOf(url) { var i = url.indexOf("/villa-images/"); return i < 0 ? null : decodeURIComponent(url.slice(i + 14).split("?")[0]); }
+  function removeFiles(urls) {
+    var paths = urls.map(pathOf).filter(Boolean);
+    if (paths.length) sb.storage.from("villa-images").remove(paths);
+  }
+  function openVilla(v) {
+    if (!S.dests.length) return LC.toast("Add a destination first.");
+    editVilla = v || null; imgs = v ? (v.images || []).slice() : []; added = []; removed = [];
+    $("#villaTitle").textContent = v ? "Edit villa" : "New villa";
+    $("#fvDest").value = v ? v.destination : ($("#vFilter").value || S.dests[0].slug);
+    $("#fvName").value = v ? v.name : ""; $("#fvLoc").value = v ? (v.location || "") : "";
+    $("#fvPrice").value = v ? (v.price_note || "") : ""; $("#fvDesc").value = v ? (v.description || "") : "";
+    $("#fvSort").value = v ? v.sort : 0; $("#fvPub").checked = v ? v.published : true;
+    $("#fvErr").textContent = ""; $("#fvUp").textContent = ""; $("#fvFiles").value = "";
+    renderImgs(); $("#villaDlg").showModal();
+  }
+  $("#addVilla").onclick = function () { openVilla(null); };
+  $("#villaDlg").addEventListener("close", function () {
+    if (added.length) { removeFiles(added); added = []; } // otkazano: obriši neupotrebljene upload-e
+  });
+  function renderImgs() {
+    $("#fvImgs").innerHTML = imgs.map(function (u, i) {
+      return '<figure><img src="' + esc(u) + '" alt="Photo ' + (i + 1) + '">' + (i === 0 ? '<span class="first">Cover</span>' : '') +
+        '<div class="ctl"><button type="button" data-mv="-1" data-i="' + i + '" aria-label="Move left">&larr;</button>' +
+        '<button type="button" data-rm="1" data-i="' + i + '" aria-label="Remove photo">&times;</button>' +
+        '<button type="button" data-mv="1" data-i="' + i + '" aria-label="Move right">&rarr;</button></div></figure>';
+    }).join("");
+  }
+  $("#fvImgs").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var i = +b.dataset.i;
+    if (b.dataset.rm) { var u = imgs.splice(i, 1)[0]; if (added.indexOf(u) >= 0) { added.splice(added.indexOf(u), 1); removeFiles([u]); } else removed.push(u); }
+    else { var j = i + +b.dataset.mv; if (j < 0 || j >= imgs.length) return; var t = imgs[i]; imgs[i] = imgs[j]; imgs[j] = t; }
+    renderImgs();
+  });
+  async function shrink(file) {
+    var bmp = await createImageBitmap(file), s = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+    var c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    return new Promise(function (res) { c.toBlob(res, "image/jpeg", 0.85); });
+  }
+  $("#fvFiles").addEventListener("change", async function () {
+    var files = Array.prototype.slice.call(this.files), up = $("#fvUp"), n = 0;
+    for (var k = 0; k < files.length; k++) {
+      up.textContent = "Uploading " + (k + 1) + " / " + files.length + "…";
+      try {
+        var blob = await shrink(files[k]);
+        var path = "villas/" + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + k) + ".jpg";
+        var r = await sb.storage.from("villa-images").upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+        if (r.error) throw r.error;
+        var url = sb.storage.from("villa-images").getPublicUrl(path).data.publicUrl;
+        imgs.push(url); added.push(url); n++; renderImgs();
+      } catch (ex) { LC.toast("Upload failed: " + (ex.message || files[k].name)); }
+    }
+    up.textContent = n ? n + " photo(s) added." : ""; this.value = "";
+  });
+  $("#villaForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var err = $("#fvErr"), btn = $("#fvSave"); err.textContent = "";
+    var row = {
+      destination: $("#fvDest").value, name: $("#fvName").value.trim(), location: $("#fvLoc").value.trim() || null,
+      price_note: $("#fvPrice").value.trim() || null, description: $("#fvDesc").value.trim() || null,
+      sort: parseInt($("#fvSort").value, 10) || 0, published: $("#fvPub").checked, images: imgs
+    };
+    if (!row.name) return (err.textContent = "Enter a name.");
+    btn.disabled = true;
+    var r = editVilla ? await sb.from("villas").update(row).eq("id", editVilla.id) : await sb.from("villas").insert(row);
+    btn.disabled = false;
+    if (r.error) return (err.textContent = r.error.message);
+    added = []; removeFiles(removed); removed = [];
+    $("#villaDlg").close(); LC.toast("Villa saved"); loadVillas();
+  });
+
+  /* ---------- Upiti ---------- */
+  async function loadInqs() {
+    var r = await sb.from("inquiries").select("*").order("created_at", { ascending: false }).limit(300);
+    S.inqs = r.data || []; renderInqs();
+  }
+  function renderInqs() {
+    var f = $("#iFilter").value, n = S.inqs.filter(function (i) { return i.status === "new"; }).length;
+    $("#bInq").hidden = !n; $("#bInq").textContent = n;
+    var rows = S.inqs.filter(function (i) { return !f || i.status === f; });
+    $("#iList").innerHTML = rows.map(function (i) {
+      var dates = (i.check_in || i.check_out) ? (i.check_in || "?") + " → " + (i.check_out || "?") : "";
+      var wa = i.phone ? '<a class="tbtn" target="_blank" rel="noopener" href="https://wa.me/' + esc(i.phone.replace(/[^\d]/g, "")) + '">WhatsApp</a>' : "";
+      return '<article class="inq-card"><div class="top"><h3>' + esc(i.name) + '</h3><span class="meta">' + LC.fmtTime(i.created_at) + '</span></div>' +
+        '<p class="meta">' + esc(i.villa_name || "General inquiry") + (dates ? " · " + esc(dates) : "") + (i.guests ? " · " + i.guests + " guests" : "") + '</p>' +
+        (i.message ? '<p>' + esc(i.message).replace(/\n/g, "<br>") + '</p>' : "") +
+        '<p class="meta">' + esc(i.email) + (i.phone ? " · " + esc(i.phone) : "") + '</p>' +
+        '<div class="acts" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">' +
+        '<select data-st="' + i.id + '" aria-label="Status"><option value="new"' + (i.status === "new" ? " selected" : "") + '>New</option><option value="contacted"' + (i.status === "contacted" ? " selected" : "") + '>Contacted</option><option value="closed"' + (i.status === "closed" ? " selected" : "") + '>Closed</option></select>' +
+        '<a class="tbtn" href="mailto:' + esc(i.email) + '?subject=' + encodeURIComponent("Your La Clé inquiry" + (i.villa_name ? " — " + i.villa_name : "")) + '">Reply by email</a>' + wa +
+        '<button class="tbtn danger" data-di="' + i.id + '">Delete</button></div></article>';
+    }).join("") || '<p class="muted">No inquiries.</p>';
+  }
+  $("#iFilter").onchange = renderInqs;
+  $("#iList").addEventListener("change", async function (e) {
+    var s = e.target.closest("[data-st]"); if (!s) return;
+    var r = await sb.from("inquiries").update({ status: s.value }).eq("id", s.dataset.st);
+    if (r.error) return LC.toast(r.error.message);
+    S.inqs.forEach(function (i) { if (i.id === s.dataset.st) i.status = s.value; }); renderInqs();
+  });
+  $("#iList").addEventListener("click", async function (e) {
+    var d = e.target.closest("[data-di]"); if (!d) return;
+    if (!confirm("Delete this inquiry?")) return;
+    var r = await sb.from("inquiries").delete().eq("id", d.dataset.di);
+    if (r.error) return LC.toast(r.error.message);
+    S.inqs = S.inqs.filter(function (i) { return i.id !== d.dataset.di; }); renderInqs();
+  });
+
+  /* ---------- Chat ---------- */
+  async function loadConvs() {
+    var r = await sb.from("conversations").select("*, profiles(full_name,email)").order("last_message_at", { ascending: false });
+    S.convs = r.data || [];
+    var u = await sb.from("messages").select("conversation_id").eq("from_admin", false).eq("is_read", false);
+    S.unread = {}; (u.data || []).forEach(function (m) { S.unread[m.conversation_id] = (S.unread[m.conversation_id] || 0) + 1; });
+    renderConvs();
+  }
+  function renderConvs() {
+    var total = 0; Object.keys(S.unread).forEach(function (k) { total += S.unread[k]; });
+    $("#bChat").hidden = !total; $("#bChat").textContent = total;
+    $("#cList").innerHTML = S.convs.map(function (c) {
+      var p = c.profiles || {}, n = S.unread[c.id] || 0;
+      return '<button type="button" data-cv="' + c.id + '"' + (S.curConv === c.id ? ' aria-current="true"' : "") + '><span class="n"><span>' + esc(p.full_name || p.email || "Guest") + '</span>' + (n ? '<span class="badge">' + n + '</span>' : "") + '</span><span class="muted" style="font-size:.85rem">' + LC.fmtTime(c.last_message_at) + '</span></button>';
+    }).join("") || '<p class="muted" style="padding:1rem">No conversations yet.</p>';
+  }
+  $("#cList").addEventListener("click", function (e) { var b = e.target.closest("[data-cv]"); if (b) openConv(b.dataset.cv); });
+  var seen = {};
+  function addBubble(m) {
+    if (seen[m.id]) return; seen[m.id] = 1;
+    var box = $("#cMsgs"), em = box.querySelector(".chat-empty"); if (em) em.remove();
+    var b = document.createElement("div"); b.className = "bubble " + (m.from_admin ? "me" : "them"); b.textContent = m.body;
+    var t = document.createElement("time"); t.textContent = LC.fmtTime(m.created_at); b.appendChild(t);
+    box.appendChild(b); box.scrollTop = box.scrollHeight;
+  }
+  async function openConv(id) {
+    S.curConv = id; seen = {};
+    var c = S.convs.filter(function (x) { return x.id === id; })[0], p = (c && c.profiles) || {};
+    $("#cHead").textContent = (p.full_name || "Guest") + (p.email ? " · " + p.email : "");
+    $("#cForm").hidden = false; $("#cMsgs").innerHTML = "";
+    var r = await sb.from("messages").select("*").eq("conversation_id", id).order("created_at").limit(300);
+    (r.data || []).forEach(addBubble);
+    await sb.from("messages").update({ is_read: true }).eq("conversation_id", id).eq("from_admin", false).eq("is_read", false);
+    S.unread[id] = 0; renderConvs(); $("#cInput").focus();
+  }
+  $("#cForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var inp = $("#cInput"), body = inp.value.trim(); if (!body || !S.curConv) return;
+    inp.value = "";
+    var r = await sb.from("messages").insert({ conversation_id: S.curConv, sender_id: LC.user.id, from_admin: true, body: body }).select().single();
+    if (r.error) { LC.toast("Not sent: " + r.error.message); inp.value = body; return; }
+    addBubble(r.data);
+  });
+
+  /* ---------- Uživo ---------- */
+  function startLive() {
+    stopLive();
+    S.live = sb.channel("admin-live")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "inquiries" }, function (p) {
+        S.inqs.unshift(p.new); renderInqs(); LC.toast("New inquiry from " + p.new.name);
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, function (p) {
+        var m = p.new;
+        if (m.from_admin) return;
+        if (S.tab === "chat" && S.curConv === m.conversation_id) {
+          addBubble(m);
+          sb.from("messages").update({ is_read: true }).eq("id", m.id);
+        } else {
+          S.unread[m.conversation_id] = (S.unread[m.conversation_id] || 0) + 1;
+          LC.toast("New chat message");
+        }
+        loadConvs();
+      })
+      .subscribe();
+  }
+  function stopLive() { if (S.live) { sb.removeChannel(S.live); S.live = null; } }
+})();
+</script>
+</body>
+</html>
